@@ -209,6 +209,7 @@ const formatTime = (seconds) => {
 let timeInterval = null;
 
 // Sketch p5.js
+// Sketch p5.js optimisé
 const sketch = (p) => {
   let t = 0; // pour le fond psychédélique
 
@@ -220,23 +221,13 @@ const sketch = (p) => {
   };
 
   p.draw = () => {
-    // ----- Fond -----
+    // ----- Fond simplifié -----
     if (isPsychedelic.value) {
-      // Fond psychédélique animé
-      p.loadPixels();
-      for (let x = 0; x < p.width; x++) {
-        for (let y = 0; y < p.height; y++) {
-          const r = 128 + 128 * Math.sin(x * 0.01 + t);
-          const g = 128 + 128 * Math.sin(y * 0.01 + t + 2);
-          const b = 128 + 128 * Math.sin((x + y) * 0.01 + t + 4);
-          const idx = (x + y * p.width) * 4;
-          p.pixels[idx] = r;
-          p.pixels[idx + 1] = g;
-          p.pixels[idx + 2] = b;
-          p.pixels[idx + 3] = 255;
-        }
-      }
-      p.updatePixels();
+      // Fond coloré simple qui change avec le temps
+      const r = 50 + 50 * Math.sin(t);
+      const g = 50 + 50 * Math.sin(t + 2);
+      const b = 50 + 50 * Math.sin(t + 4);
+      p.background(r, g, b);
       t += 0.05;
     } else {
       p.background(0); // fond normal
@@ -267,26 +258,38 @@ const sketch = (p) => {
       const currentTime = p.millis();
       const wordInterval = 1000 / currentSpeed.value;
       const timeSinceLastWord = currentTime - lastWordTime;
+
+      // Amélioration : transition plus fluide
       const fadeProgress = Math.min(
-        timeSinceLastWord / (wordInterval * 0.3),
+        timeSinceLastWord / (wordInterval * 0.2),
         1
       );
-      const alpha = p.map(fadeProgress, 0, 1, 50, 255);
+      const alpha = p.map(fadeProgress, 0, 1, 100, 255);
 
-      // Mot courant
-      p.fill(
-        isPsychedelic.value ? [255, 255, 0, alpha] : [255, 255, 255, alpha]
-      );
+      // Mot courant - version simplifiée
+      if (isPsychedelic.value) {
+        // Couleur qui change avec le temps
+        const textR = 200 + 55 * Math.sin(t * 2);
+        const textG = 200 + 55 * Math.sin(t * 2 + 1);
+        const textB = 100 + 55 * Math.sin(t * 2 + 2);
+        p.fill(textR, textG, textB, alpha);
+      } else {
+        p.fill(255, 255, 255, alpha);
+      }
       p.text(words.value[index.value], p.width / 2, p.height / 2);
 
       // Mot suivant en transparence
       if (index.value < words.value.length - 1) {
-        p.fill(isPsychedelic.value ? [255, 255, 0, 50] : [100, 100, 150, 50]);
         p.textSize(textSizeValue * 0.6);
+        if (isPsychedelic.value) {
+          p.fill(150, 150, 200, 80);
+        } else {
+          p.fill(100, 100, 150, 50);
+        }
         p.text(words.value[index.value + 1], p.width / 2, p.height / 2 + 80);
       }
 
-      // Incrémenter l’index après affichage
+      // Incrémenter l'index
       if (!isPaused.value && timeSinceLastWord >= wordInterval) {
         index.value++;
         lastWordTime = currentTime;
@@ -294,7 +297,13 @@ const sketch = (p) => {
     } else {
       // ----- Texte de fin -----
       p.textSize(Math.min(p.width / 20, 32));
-      p.fill(isPsychedelic.value ? [255, 255, 0] : [150, 255, 150]);
+      if (isPsychedelic.value) {
+        const textR = 200 + 55 * Math.sin(t * 2);
+        const textG = 200 + 55 * Math.sin(t * 2 + 1);
+        p.fill(textR, textG, 100);
+      } else {
+        p.fill(150, 255, 150);
+      }
       p.text("Lecture terminée !", p.width / 2, p.height / 2 - 30);
     }
   };
@@ -308,6 +317,158 @@ const sketch = (p) => {
     p.resizeCanvas(Math.min(containerWidth, 800), 400);
   };
 };
+// Sketch p5.js optimisé
+// const sketch = (p) => {
+//   let t = 0; // pour le fond psychédélique
+
+//   p.setup = () => {
+//     const canvas = p.createCanvas(800, 400);
+//     canvas.parent(p5Container.value);
+//     p.frameRate(currentSpeed.value);
+//     p.textAlign(p.CENTER, p.CENTER);
+//   };
+
+//   p.draw = () => {
+//     // ----- Fond optimisé -----
+//     if (isPsychedelic.value) {
+//       // Version optimisée avec dégradés CSS-like au lieu de pixel par pixel
+//       p.background(0);
+
+//       // Créer plusieurs rectangles colorés animés
+//       p.blendMode(p.SCREEN);
+
+//       // Premier calque
+//       p.fill(128 + 128 * Math.sin(t), 0, 128 + 128 * Math.cos(t * 0.7), 100);
+//       p.rect(0, 0, p.width, p.height);
+
+//       // Deuxième calque
+//       p.fill(
+//         0,
+//         128 + 128 * Math.sin(t + 1),
+//         128 + 128 * Math.cos(t * 0.5),
+//         100
+//       );
+//       p.rect(0, 0, p.width, p.height);
+
+//       // Troisième calque
+//       p.fill(
+//         128 + 128 * Math.cos(t * 1.2),
+//         128 + 128 * Math.sin(t + 2),
+//         0,
+//         100
+//       );
+//       p.rect(0, 0, p.width, p.height);
+
+//       // Remettre le mode de fusion normal
+//       p.blendMode(p.BLEND);
+
+//       t += 0.03; // Ralentir légèrement l'animation
+//     } else {
+//       p.background(0); // fond normal
+//     }
+
+//     // ----- Texte avant démarrage -----
+//     if (!hasStarted.value) {
+//       p.fill(isPsychedelic.value ? [255, 255, 0] : 255);
+//       p.textSize(28);
+//       p.text(
+//         "Appuyez sur 'Démarrer' pour commencer...\nBonne lecture ! (et bon courage)",
+//         p.width / 2,
+//         p.height / 2
+//       );
+//       return;
+//     }
+
+//     // ----- Mettre à jour le temps écoulé -----
+//     if (!isPaused.value && startTime.value) {
+//       elapsedTime.value = (Date.now() - startTime.value) / 1000;
+//     }
+
+//     const textSizeValue = Math.min(p.width / 12, 64);
+//     p.textSize(textSizeValue);
+
+//     // ----- Affichage du mot courant -----
+//     if (index.value < words.value.length) {
+//       const currentTime = p.millis();
+//       const wordInterval = 1000 / currentSpeed.value;
+//       const timeSinceLastWord = currentTime - lastWordTime;
+
+//       // Amélioration : transition plus fluide
+//       const fadeProgress = Math.min(
+//         timeSinceLastWord / (wordInterval * 0.2),
+//         1
+//       );
+//       const alpha = p.map(fadeProgress, 0, 1, 100, 255);
+
+//       // Mot courant avec ombre pour meilleure lisibilité en mode psychédélique
+//       if (isPsychedelic.value) {
+//         // Ombre
+//         p.fill(0, 150);
+//         p.text(words.value[index.value], p.width / 2 + 2, p.height / 2 + 2);
+//         // Texte principal
+//         p.fill(255, 255, 100, alpha);
+//       } else {
+//         p.fill(255, 255, 255, alpha);
+//       }
+//       p.text(words.value[index.value], p.width / 2, p.height / 2);
+
+//       // Mot suivant en transparence
+//       if (index.value < words.value.length - 1) {
+//         p.textSize(textSizeValue * 0.6);
+//         if (isPsychedelic.value) {
+//           // Ombre pour le mot suivant aussi
+//           p.fill(0, 80);
+//           p.text(
+//             words.value[index.value + 1],
+//             p.width / 2 + 1,
+//             p.height / 2 + 81
+//           );
+//           p.fill(200, 200, 150, 80);
+//         } else {
+//           p.fill(100, 100, 150, 50);
+//         }
+//         p.text(words.value[index.value + 1], p.width / 2, p.height / 2 + 80);
+//       }
+
+//       // Incrémenter l'index - logique simplifiée pour éviter les bugs de timing
+//       if (!isPaused.value && timeSinceLastWord >= wordInterval) {
+//         index.value++;
+//         lastWordTime = currentTime;
+
+//         // Force le clear sur mobile en mode psychédélique pour éviter les doublons
+//         if (
+//           isPsychedelic.value &&
+//           /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+//             navigator.userAgent
+//           )
+//         ) {
+//           p.clear();
+//         }
+//       }
+//     } else {
+//       // ----- Texte de fin -----
+//       p.textSize(Math.min(p.width / 20, 32));
+//       if (isPsychedelic.value) {
+//         // Ombre pour le texte de fin
+//         p.fill(0, 150);
+//         p.text("Lecture terminée !", p.width / 2 + 2, p.height / 2 - 28);
+//         p.fill(255, 255, 0);
+//       } else {
+//         p.fill(150, 255, 150);
+//       }
+//       p.text("Lecture terminée !", p.width / 2, p.height / 2 - 30);
+//     }
+//   };
+
+//   p.keyPressed = () => {
+//     if (isTextLoaded.value) restartAnimation();
+//   };
+
+//   p.windowResized = (event) => {
+//     const containerWidth = p5Container.value?.clientWidth || 800;
+//     p.resizeCanvas(Math.min(containerWidth, 800), 400);
+//   };
+// };
 
 onMounted(async () => {
   await loadTextFile();
