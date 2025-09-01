@@ -29,13 +29,13 @@ jobs:
         run: npm run build
 
       # 5️⃣ Déployer sur GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          # URL avec token pour push
-          publish_dir: ./dist
-          publish_branch: gh-pages
-          user_name: "github-actions[bot]"
-          user_email: "github-actions[bot]@users.noreply.github.com"
-          # Authentification explicite
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+- name: Deploy to GitHub Pages
+  uses: peaceiris/actions-gh-pages@v3
+  with:
+    # URL avec token pour push
+    publish_dir: ./dist
+    publish_branch: gh-pages
+    user_name: 'github-actions[bot]'
+    user_email: 'github-actions[bot]@users.noreply.github.com'
+    # Authentification explicite
+    github_token: ${{ secrets.GITHUB_TOKEN }}
