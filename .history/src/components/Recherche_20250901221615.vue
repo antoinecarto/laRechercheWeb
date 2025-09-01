@@ -297,7 +297,7 @@ const sketch = (p) => {
     // ----- Texte avant démarrage -----
     if (!hasStarted.value) {
       p.fill(isPsychedelic.value ? [255, 255, 0] : 255);
-      p.textSize(14);
+      p.textSize(28);
       p.text(
         "Appuyez sur 'Démarrer' pour commencer...\nBonne lecture ! (et bon courage)",
         p.width / 2,

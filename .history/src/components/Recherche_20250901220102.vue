@@ -27,9 +27,7 @@
             :style="{ width: progressPercent + '%' }"
           ></div>
           <span class="progress-text">
-            {{ progressPercent }}{{ progressUnit }} ({{ index }}/{{
-              totalWords
-            }})
+            {{ Math.round(progressPercent) }}% ({{ index }}/{{ totalWords }})
           </span>
         </div>
       </div>
@@ -143,37 +141,9 @@ const remainingTime = computed(() =>
     ? (totalWords.value - index.value) / currentSpeed.value
     : 0
 );
-const progressPercent = computed(() => {
-  if (totalWords.value === 0) return 0;
-
-  const progress = (index.value / totalWords.value) * 100;
-
-  // Affichage adaptatif selon le pourcentage
-  if (progress < 0.1) {
-    // Pour 10000 : affiche 1/10000, 2/10000, etc.
-    return (progress * 100).toFixed(2);
-  } else if (progress < 1) {
-    // Pour mille : affiche 1.5‰, 2.3‰, etc.
-    return (progress * 10).toFixed(1);
-  } else {
-    // Pour cent classique : affiche 1.2%, 5.8%, etc.
-    return progress.toFixed(1);
-  }
-});
-
-const progressUnit = computed(() => {
-  if (totalWords.value === 0) return "%";
-
-  const progress = (index.value / totalWords.value) * 100;
-
-  if (progress < 0.1) {
-    return "‱"; // pour 10000
-  } else if (progress < 1) {
-    return "‰"; // pour mille
-  } else {
-    return "%"; // pour cent
-  }
-});
+const progressPercent = computed(() =>
+  totalWords.value > 0 ? (index.value / totalWords.value) * 100 : 0
+);
 
 // Chargement du fichier texte
 const loadTextFile = async () => {
@@ -478,7 +448,7 @@ onUnmounted(() => {
 
 /* --- Speed control --- */
 .speed-control {
-  background: white;
+  background: gray;
   padding: 1.5rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;

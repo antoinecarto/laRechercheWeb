@@ -167,7 +167,7 @@ const progressUnit = computed(() => {
   const progress = (index.value / totalWords.value) * 100;
 
   if (progress < 0.1) {
-    return "‱"; // pour 10000
+    return "/10000"; // pour 10000
   } else if (progress < 1) {
     return "‰"; // pour mille
   } else {
@@ -297,7 +297,7 @@ const sketch = (p) => {
     // ----- Texte avant démarrage -----
     if (!hasStarted.value) {
       p.fill(isPsychedelic.value ? [255, 255, 0] : 255);
-      p.textSize(14);
+      p.textSize(28);
       p.text(
         "Appuyez sur 'Démarrer' pour commencer...\nBonne lecture ! (et bon courage)",
         p.width / 2,
@@ -472,7 +472,7 @@ onUnmounted(() => {
   transform: translate(-50%, -50%);
   font-size: 0.85rem;
   font-weight: 600;
-  color: black;
+  color: white;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
