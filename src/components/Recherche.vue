@@ -98,6 +98,13 @@
       </p>
     </div>
   </div>
+  <section id="licence">
+  <p>
+    <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank" rel="noopener noreferrer">
+      <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3">
+    </a>
+  </p>
+</section>
 </template>
 
 <script setup>
