@@ -85,7 +85,6 @@
         </button>
         <!-- Bouton psychédélique seulement sur desktop -->
         <button
-          v-if="!isMobileDevice"
           @click="isPsychedelic = !isPsychedelic"
           class="btn-mode"
         >
@@ -275,20 +274,16 @@ const sketch = (p) => {
     // ----- Fond -----
     if (isPsychedelic.value) {
       // Fond psychédélique animé
-      p.loadPixels();
-      for (let x = 0; x < p.width; x++) {
-        for (let y = 0; y < p.height; y++) {
-          const r = 128 + 128 * Math.sin(x * 0.01 + t);
-          const g = 128 + 128 * Math.sin(y * 0.01 + t + 2);
-          const b = 128 + 128 * Math.sin((x + y) * 0.01 + t + 4);
-          const idx = (x + y * p.width) * 4;
-          p.pixels[idx] = r;
-          p.pixels[idx + 1] = g;
-          p.pixels[idx + 2] = b;
-          p.pixels[idx + 3] = 255;
-        }
-      }
-      p.updatePixels();
+for (let x = 0; x < p.width; x += 10) {
+  for (let y = 0; y < p.height; y += 10) {
+    const r = 128 + 128 * Math.sin(x * 0.01 + t);
+    const g = 128 + 128 * Math.sin(y * 0.01 + t + 2);
+    const b = 128 + 128 * Math.sin((x + y) * 0.01 + t + 4);
+    p.fill(r, g, b);
+    p.noStroke();
+    p.rect(x, y, 10, 10);
+  }
+}
       t += 0.05;
     } else {
       p.background(0); // fond normal
@@ -299,7 +294,7 @@ const sketch = (p) => {
       p.fill(isPsychedelic.value ? [255, 255, 0] : 255);
       p.textSize(14);
       p.text(
-        "Appuyez sur 'Démarrer' pour commencer...\nBonne lecture ! (et bon courage)",
+        "Bonne lecture ! (et bon courage)",
         p.width / 2,
         p.height / 2
       );
